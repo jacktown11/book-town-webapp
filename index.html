@@ -348,7 +348,7 @@
 						setStore = function (key, value) {
 							win.localStorage.setItem(prefix + key, value);
 						},
-						getBSONP = function(url, callback){
+						getBSONP = function(url, callback, errorCallback){
 							return $.jsonp({
 								url: url,
 								cache: true,
@@ -385,48 +385,78 @@
 						chapter_count;
 
 					var init = function(uiCallback){
-							getArticalInfo(function(){
-								getChapterContent(chapter_id, function(data){
-										uiCallback && uiCallback(data);
-									});
-								});
-						},
-						getArticalInfo = function (callback) {
-							$.get('data/chapter.json', function (data) {
-								// 获得章节信息之后的回调								
-								chapter_id = data.chapters[0].chapter_id;
-								chapter_count = data.chapters.length;
+							getArticalInfoPromise()
+							.then(function(data){
+								getChapterContentPromise(0)
+								.then(function(data){
+									uiCallback(data);
+								}, function(){});	
+							}, function(){});	
 
-								// 判断之前是否有章节缓存数据
-								var stored_chapter_id = parseInt(utils.getStore('chapter_id'),10);
-								if(stored_chapter_id >= 0 && stored_chapter_id <= chapter_count-1){
-									chapter_id = stored_chapter_id;
-								}else{
-									utils.setStore('chapter_id',chapter_id);
-								}
+							// getArticalInfoPromise()
+							// .then(function(data){
+							// 	return getChapterContentPromise(0);
+							// }, function(){
+							// 	return new Promise(function(resolve,reject){reject();});
+							// })
+							// .then(function(data){
+							// 	uiCallback(data);
+							// }, function(){});
 
-								callback && callback();
-							}, 'json');
 						},
-						getChapterContent = function (target_chapter_id, callback) {
-							if(target_chapter_id>=0 && target_chapter_id<=chapter_count-1){
-								chapter_id = target_chapter_id;
-								utils.setStore('chapter_id',chapter_id);
-								$.get('data/data' + chapter_id + '.json', function (data) {
-										if(data.result == 0){
-											var url = data.jsonp;
-											utils.getBSONP(url, function(data){
-												callback && callback(data);
-											});
+						getArticalInfoPromise = function () {
+							return new Promise(function(resolve, reject){
+								$.get('data/chapter.json', function (data) {
+									// 获得章节信息之后的回调						
+									if(data.result === 0){
+										chapter_id = data.chapters[0].chapter_id;
+										chapter_count = data.chapters.length;
+
+										// 判断之前是否有章节缓存数据
+										var stored_chapter_id = parseInt(utils.getStore('chapter_id'),10);
+										if(stored_chapter_id >= 0 && stored_chapter_id <= chapter_count-1){
+											chapter_id = stored_chapter_id;
+										}else{
+											utils.setStore('chapter_id',chapter_id);
 										}
-									}, 'json');
-							}
+										resolve();
+									}else{
+										reject();
+									}
+								}, 'json');	
+							});
+						},
+						getChapterContentPromise = function (target_chapter_id) {
+							return new Promise(function(resolve, reject){
+								if(target_chapter_id>=0 && target_chapter_id<=chapter_count-1){
+									chapter_id = target_chapter_id;
+									utils.setStore('chapter_id',chapter_id);
+									$.get('data/data' + chapter_id + '.json', function (data) {
+											if(data.result == 0){
+												var url = data.jsonp;
+												utils.getBSONP(url, function(data){
+													resolve(data);
+												});
+											}else{
+												reject();
+											}
+										}, 'json');
+								}else{
+									reject();
+								}
+							});
 						},
 						goToNextChapter = function(uiCallback){
-							getChapterContent(parseInt(chapter_id,10) + 1, uiCallback);
+							getChapterContentPromise(parseInt(chapter_id,10) + 1)
+							.then(function(data){
+								uiCallback(data);
+							}, function(){});
 						},
 						goToPrevChapter = function(uiCallback){
-							getChapterContent(parseInt(chapter_id,10) - 1, uiCallback);
+							getChapterContentPromise(parseInt(chapter_id,10) - 1)
+							.then(function(data){
+								uiCallback(data);
+							}, function(){});
 						};
 
 					return {
