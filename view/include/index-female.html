@@ -7,34 +7,19 @@
 	<div>
 		<div>
 			<ul class="list-h5">
-				<li>
+				<li v-for="(book, index) in female" v-if="index < 5">
 					<div class="book-h5">
 						<div class="book-h5-cover">
-							<img src="/static/img/book-cover1.jpg" alt="">
-							<p class="book-h5-finish">完结</p>
+							<img :src="book.cover" alt="">
+							<p v-if="book.finish" class="book-h5-finish">完结</p>
+							<p v-else class="book-h5-finish">未完结</p>
 						</div>
 						<div class="book-h5-info">
-							<p class="book-h5-title">书名</p>
-							<p class="book-h5-author">作者</p>
-							<p class="book-h5-summary">简介</p>
+							<p class="book-h5-title">{{book.title}}</p>
+							<p class="book-h5-author">{{book.author}}</p>
+							<p class="book-h5-summary">{{book.summary}}</p>
 							<div class="book-h5-wrap">
-								<div class="book-h5-tag">标签</div>	
-							</div>
-						</div>
-					</div>
-				</li>
-				<li>
-					<div class="book-h5">
-						<div class="book-h5-cover">
-							<img src="/static/img/book-cover1.jpg" alt="">
-							<p class="book-h5-finish">完结</p>
-						</div>
-						<div class="book-h5-info">
-							<p class="book-h5-title">书名</p>
-							<p class="book-h5-author">作者</p>
-							<p class="book-h5-summary">简介</p>
-							<div class="book-h5-wrap">
-								<div class="book-h5-tag">标签</div>	
+								<div v-for="tag in book.tags" class="book-h5-tag">{{tag}}</div>	
 							</div>
 						</div>
 					</div>
