@@ -6,7 +6,9 @@
 		<li v-for="book in free">
 			<div class="u-book">
 				<div class="book-cover">
-					<img :src="book.data.cover" alt="">
+					<a href="/reader">
+						<img :src="book.data.cover" alt="">					
+					</a>
 					<div class="u-tagRT -freefiction"></div>
 				</div>
 				<div class="book-info">

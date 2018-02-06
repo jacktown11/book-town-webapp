@@ -10,7 +10,9 @@
 				<li v-for="(book, index) in female" v-if="index < 5">
 					<div class="book-h5">
 						<div class="book-h5-cover">
-							<img :src="book.cover" alt="">
+							<a href="/reader">
+								<img :src="book.cover" alt="">
+							</a>
 							<p v-if="book.finish" class="book-h5-finish">完结</p>
 							<p v-else class="book-h5-finish">未完结</p>
 						</div>

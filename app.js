@@ -44,9 +44,13 @@ app.use(controller.get('/api_test', function(){
 /*==========
 各个页面的访问路由设置
 ===========*/
-app.use(controller.get('/', function*(){
+app.use(controller.get('/', function* () {
 	this.set('Cache-Control', 'no-cache');
-	this.body = yield render('index', {title: '书城首页'});
+	this.body = yield render('index', { title: '书城首页' });
+})); 
+app.use(controller.get('/reader', function* () {
+	this.set('Cache-Control', 'no-cache');
+	this.body = yield render('reader', { title: '书城首页' });
 }));
 
 app.use(controller.get('/male', function*(){
@@ -108,6 +112,17 @@ app.use(controller.get('/ajax/rank', function*(){
 	this.set('Cache-Control', 'no-cache');
 	this.body = service.get_rank_data();
 }));
+// reader的数据请求
+app.use(controller.get('/ajax/article_info', function*() {
+	this.set('Cache-Control', 'no-cache');
+	this.body = service.get_article_info();
+}));
+app.use(controller.get('/ajax/chapter_content', function*() {
+	this.set('Cache-Control', 'no-cache');
+	var params = querystring.parse(this.req._parsedUrl.query);
+	this.body = service.get_chapter_content(params.chapterId);
+}));
+
 
 // 在线http查询接口(这是在线存在的真实数据)
 app.use(controller.get('/ajax/search', function*(){

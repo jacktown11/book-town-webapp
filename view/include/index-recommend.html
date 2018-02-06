@@ -12,7 +12,9 @@
 		<li v-for="(book, index) in recommend" v-if="index === 0">
 			<div class="book-h5">
 				<div class="book-h5-cover">
-					<img src="/static/img/book-cover1.jpg" alt="">
+					<a href="/reader">
+						<img src="/static/img/book-cover1.jpg" alt="">					
+					</a>
 					<p v-if="book.finish" class="book-h5-finish">完结</p>
 					<p v-else class="book-h5-finish">未完结</p>
 				</div>

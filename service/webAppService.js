@@ -34,7 +34,14 @@ exports.get_rank_data = function(){
 	var content = fs.readFileSync('./mock/rank.json', 'utf-8');
 	return content;
 };
-
+exports.get_article_info = function () {
+	var content = fs.readFileSync('./mock/reader/chapter.json', 'utf-8');
+	return content;
+};
+exports.get_chapter_content = function (chapterId) {
+	var content = fs.readFileSync('./mock/reader/data/data' + chapterId + '.json', 'utf-8');
+	return content;
+};
 
 exports.get_search_data = function(start, end, keyword){
 	return function(cb){
